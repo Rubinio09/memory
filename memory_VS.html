@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Match Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('background_black_triangles.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        #game-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #game-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            justify-content: center;
+            align-content: center;
+            text-align: center;
+            margin: auto;
+        }
+
+        .game-card {
+            width: 100px;
+            height: 100px;
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            user-select: none;
+        }
+
+        #score-box {
+            text-align: center;
+            margin-top: 20px;
+            border: 1px solid #000000;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: rgb(175, 108, 7);
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="game-info">
+        <h1>Photo Match Game</h1>
+        <p>Match the pairs of photos by clicking on the cards. Flip two cards at a time and try to find all the matching pairs.</p>
+    </div>
+
+    <div id="game-board" class="game-board"></div>
+
+    <div id="score-box">
+        <p>Score: <span id="score">0</span></p>
+        <p>Tries: <span id="tries">0</span></p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const images = [
+            'one_lion.jpg',
+            'two_lions.jpg',
+            'solo_dog.jpg',
+            'duo_dog.jpg',
+            'cat.jpg',
+            // Add more image URLs as needed
+        ];
+
+        const backImage = 'card_background.jpg'; // Replace with your desired back image
+
+        let cards = [...images, ...images];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let tries = 0;
+
+        cards = shuffleArray(cards);
+
+        const gameBoard = document.getElementById('game-board');
+        cards.forEach((_, index) => {
+            const card = document.createElement('div');
+            card.classList.add('game-card');
+            card.dataset.index = index;
+            card.style.backgroundImage = `url(${backImage})`;
+            card.addEventListener('click', flipCard);
+            gameBoard.appendChild(card);
+        });
+
+        function flipCard() {
+            const cardIndex = this.dataset.index;
+
+            if (flippedCards.length < 2 && !flippedCards.includes(cardIndex)) {
+                this.style.backgroundImage = `url(${cards[cardIndex]})`;
+                flippedCards.push(cardIndex);
+
+                if (flippedCards.length === 2) {
+                    tries++;
+                    updateTriesCounter();
+
+                    setTimeout(checkMatch, 800);
+                }
+            }
+        }
+
+        function checkMatch() {
+            const [firstCard, secondCard] = flippedCards;
+            const firstImage = cards[firstCard];
+            const secondImage = cards[secondCard];
+
+            if (firstImage === secondImage) {
+                matchedPairs++;
+                updateScore();
+
+                if (matchedPairs === images.length) {
+                    alert('Congratulations! You matched all pairs.');
+                }
+            } else {
+                resetCard(firstCard);
+                resetCard(secondCard);
+            }
+
+            flippedCards = [];
+        }
+
+        function resetCard(cardIndex) {
+            const card = document.querySelector(`[data-index="${cardIndex}"]`);
+            card.style.backgroundImage = `url(${backImage})`;
+        }
+
+        function updateScore() {
+            document.getElementById('score').innerText = matchedPairs;
+        }
+
+        function updateTriesCounter() {
+            document.getElementById('tries').innerText = tries;
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+    });
+</script>
+
+</body>
+</html>
