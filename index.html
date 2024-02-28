@@ -89,6 +89,7 @@
         ];
 
         const backImage = 'card_background.png'; // Replace with your desired back image
+        const cardBackgroundColor = 'rgba(255, 255, 255, 0.8)'; // Replace with your desired background color for cards
 
         let cards = [...images, ...images];
         let flippedCards = [];
@@ -103,6 +104,7 @@
             card.classList.add('game-card');
             card.dataset.index = index;
             card.style.backgroundImage = `url(${backImage})`;
+            card.style.backgroundColor = cardBackgroundColor;
             card.addEventListener('click', flipCard);
             gameBoard.appendChild(card);
         });
@@ -165,6 +167,3 @@
         }
     });
 </script>
-
-</body>
-</html>
